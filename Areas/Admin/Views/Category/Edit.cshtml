@@ -1,0 +1,25 @@
+﻿@model EatWellAssistant.Models.Entities.Category
+@{
+    ViewData["Title"] = "Edit Category";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Sửa thông tin mới loại sản phẩm</h4>
+            @using (Html.BeginForm("doUpdate", "Category", FormMethod.Post, new { @enctype = "multipart/form-data", @class = "forms-sample" }))
+            {
+                @Html.HiddenFor(item => item.categoryId)
+                <div class="form-group">
+                    <label for="exampleInputName1">Tên loại sản phẩm</label>
+                    @Html.TextBoxFor(m => m.categoryName, new { required = "required", @class = "form-control", placeholder = "Tên loại sản phẩm" })
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputName1">Mô tả</label>
+                    @Html.TextAreaFor(m => m.description, new { required = "required", @class = "form-control", placeholder = "Mô tả" })
+                </div>
+                <input type="submit" class="btn btn-gradient-primary me-2" name="add" value="Sửa">
+            }
+        </div>
+    </div>
+</div>

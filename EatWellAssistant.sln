@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EatWellAssistant", "EatWellAssistant.csproj", "{81F326D1-E7CE-451D-A37D-23A678CEDB31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81F326D1-E7CE-451D-A37D-23A678CEDB31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81F326D1-E7CE-451D-A37D-23A678CEDB31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81F326D1-E7CE-451D-A37D-23A678CEDB31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81F326D1-E7CE-451D-A37D-23A678CEDB31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CDDA0F89-9716-4596-9D8B-8B9B8C9AA0B5}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,87 @@
+﻿@model PlanMealViewModel
+
+@{
+    ViewData["Title"] = "Plan Meal Detail";
+}
+<section class="features">
+    <div class="container-fluid">
+        <div class="row m-0 mr-90">
+            <div class="col-12 row">
+                <div class="feature-item">
+                    <h2>Kế hoạch ăn chi tiết ngày - @Model.day.ToLongDateString()</h2>
+                    <table class="table">
+                        <thead>
+                            @foreach (var m in Model.plan.meals)
+                            {
+                                <tr>
+                                    <th class="bg-primary" scope="col">@m.mealName</th>
+                                    <th colspan="99" class="bg-primary text-right" scope="col">@m?.mealDetails.Count món</th>
+                                </tr>
+                                <tr class="bg-light">
+                                    <th>Hình ảnh / Tên</th>
+                                    <th>calo</th>
+                                    <th>protein</th>
+                                    <th>carb</th>
+                                    <th>fat</th>
+                                    <th>alcohol</th>
+                                </tr>
+                                @foreach (var md in m?.mealDetails)
+                                {
+                                    <tr>
+                                        <th scope="col">
+                                            <img src="@Url.Content(md.food.imageUrl)" alt="Food"
+                                                 style="width: 60px; height: 60px; object-fit: contain" />
+                                            @md.food.foodName
+                                        </th>
+                                        <th>@md.totalCalories</th>
+                                        <th>@md.totalProtein</th>
+                                        <th>@md.totalCarb</th>
+                                        <th>@md.totalFat</th>
+                                        <th>@md.totalAlcohol</th>
+                                    </tr>
+                                }
+                                <tr class="bg-gray">
+                                    <th class="bg-gray"></th>
+                                    <th class="bg-gray">Tổng calo</th>
+                                    <th class="bg-gray">Tổng protein</th>
+                                    <th class="bg-gray" class="bg-gray">Tổng carb</th>
+                                    <th>Tổng fat</th>
+                                    <th class="bg-gray">Tổng alcohol</th>
+                                </tr>
+                                <tr class="bg-gray">
+                                    <th class="bg-gray"></th>
+                                    <th class="bg-gray">@m.totalCalories</th>
+                                    <th class="bg-gray">@m.totalProtein</th>
+                                    <th class="bg-gray">@m.totalCarb</th>
+                                    <th class="bg-gray">@m.totalFat</th>
+                                    <th class="bg-gray">@m.totalAlcohol</th>
+                                </tr>
+                            }
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th class="bg-warning" scope="col" colspan="99">Tổng cộng </th>
+                            </tr>
+                            <tr class="bg-light">
+                                <th></th>
+                                <th>Tổng calo</th>
+                                <th>Tổng protein</th>
+                                <th>Tổng carb</th>
+                                <th>Tổng fat</th>
+                                <th>Tổng alcohol</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th>@Model.plan.meals.Sum(item => item.totalCalories)</th>
+                                <th>@Model.plan.meals.Sum(item => item.totalProtein)</th>
+                                <th>@Model.plan.meals.Sum(item => item.totalCarb)</th>
+                                <th>@Model.plan.meals.Sum(item => item.totalFat)</th>
+                                <th>@Model.plan.meals.Sum(item => item.totalAlcohol)</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

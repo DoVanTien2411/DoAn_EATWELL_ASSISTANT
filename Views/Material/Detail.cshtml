@@ -1,0 +1,114 @@
+﻿@model MaterialDetailViewModel
+
+@{
+    ViewData["Title"] = "Food Detail";
+}
+<head>
+    <style>
+        .fact-table {
+            box-shadow: 3px 3px 10px #444445;
+        }
+
+        .line {
+            border-bottom: 6px solid #000;
+        }
+
+        .line-main {
+            border-bottom: 12px solid #000;
+        }
+
+        .text-main {
+            font-weight: 900;
+            font-size: 39px;
+            border-bottom: 3px solid #000;
+            text-align: left;
+        }
+
+        .text-secondary {
+            color: #000 !important;
+            font-size: 26px !important;
+            text-align: left;
+        }
+
+        .text-normal {
+            color: #000 !important;
+            font-size: 14px !important;
+            border-bottom: 3px solid #000 !important;
+        }
+
+        .line-normal {
+            border-bottom: 2px solid #000 !important;
+        }
+    </style>
+</head>
+
+<section class="features">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="feature-block d-lg-flex">
+                    <div class="feature-item mb-5 mb-lg-0 fact-table">
+                        <h4>Tính toán calories</h4>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Định lượng (100gram)</label>
+                            <input type="number" min="1" max="100"
+                                   name="quantity" class="form-control"
+                                   value="@Model.quantity" id="quantity" placeholder="1">
+                        </div>
+                        <div class="mb-3">
+                            <a href="@Url.Action("Index", "Material")"
+                               class="btn btn-outline-warning btn-round-full btn-sm">
+                                <i class="icofont-simple-left"></i>
+                                Quay về kho
+                            </a>
+                            <button class="btn btn-success btn-round-full btn-sm" onclick="updateDetail()">Cập nhập</button>
+                            <a href="/Material/Order?id=@Model.food.foodId&quantity=@Model.quantity&page=@Model.page&cate=@Model.cate"
+                               class="btn btn-warning btn-round-full btn-sm">
+                                Order
+                            </a>
+                        </div>
+                    </div>
+                    <div class="feature-item mb-5 mb-lg-0">
+                        <table class="table">
+                            <thead>
+                                <tr class="line-main">
+                                    <th scope="col" class="text-main">@Model.food.foodName</th>
+                                </tr>
+                                <tr class="line">
+                                    <th class="text-secondary">Calories <small>per @(100 * Model.quantity) g</small></th>
+                                    <th class="text-right text-secondary" id="totalCalo">@(Model.food.caloriesPerGram * Model.quantity) g</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2" class="text-normal text-right" style="font-size: 18px !important;">% Daily Value *</th>
+                                </tr>
+                                <tr class="line-normal">
+                                    <th class="text-normal">Total protein</th>
+                                    <th class="text-right text-normal" id="totalProtein">@(Model.food.protein * Model.quantity) g</th>
+                                </tr>
+                                <tr class="line-normal">
+                                    <th class="text-normal">Total carb</th>
+                                    <th class="text-right text-normal" id="totalCarb">@(Model.food.carbs * Model.quantity) g</th>
+                                </tr>
+                                <tr class="line-normal">
+                                    <th class="text-normal">Total fat</th>
+                                    <th class="text-right text-normal" id="totalFat">@(Model.food.fat * Model.quantity) g</th>
+                                </tr>
+                                <tr class="line-normal">
+                                    <th class="text-normal">Total alcohol</th>
+                                    <th class="text-right text-normal" id="totalAlcohol">@(Model.food.alcohol * Model.quantity) g</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const quantity = document.getElementById('quantity');
+    function updateDetail() {
+        window.location.href = `/Material/Detail?id=@Model.food.foodId&quantity=${quantity.value}&page=@Model.page&cate=@Model.cate`;
+    }
+</script>
