@@ -1,0 +1,46 @@
+﻿@model IEnumerable<EatWellAssistant.Models.Entities.Users>
+@{
+    ViewBag.Title = "Quản lý tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body table-responsive">
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th scope="col"> Mã người dùng </th>
+                        <th> Email </th>
+                        <th> Mật khẩu </th>
+                        <th> Họ và tên </th>
+                        <th> # </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td scope='row'>@item.userId</td>
+                            <td class='text-truncate' style='max-width: 250px;' title='@item.email'>@item.email</td>
+                            <td>@item.password</td>
+                            <td>@item.fullName</td>
+                            <td>
+                                @if ("active".Equals(item.status))
+                                {
+                                    <a href='/Admin/Account/Block/@item.userId' class='btn btn-warning'>Khóa tài khoản</a>
+                                }
+                                else if ("block".Equals(item.status))
+                                {
+                                    <a href='/Admin/Account/UnBlock/@item.userId' class='btn btn-outline-danger'>Mở khóa</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

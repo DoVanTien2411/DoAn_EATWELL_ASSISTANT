@@ -1,0 +1,315 @@
+﻿@{
+    ViewData["CurrentController"] = "Post";
+    var userId = Context.Request.Cookies["UserId"];
+}
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8 m-auto">
+            <div class="my-3">
+                <div class="row form-group">
+                    <div class="col-sm-5 col-md-5">
+                        <input class="form-control" name="searchKey" placeholder="Tìm kiếm..." />
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                        <select class="form-control" name="orderBy">
+                            <option value="0">Ngẫu nhiên</option>
+                            <option value="1">Tin mới nhất</option>
+                            <option value="2">Lượt like nhiều nhất</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 col-md-3">
+                        <button class="btn btn-sm btn-primary w-100">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
+            <div class="post-container"></div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(userId))
+    {
+        <button class="btn btn-sm btn-success" style="position: fixed; top: 210px;" data-toggle="modal" data-target="#add-modal">Thêm bài viết</button>
+    }
+</div>
+
+@section Scripts {
+    <div class="modal fade" id="comment-modal" tabindex="-1" aria-hidden="true">
+    </div>
+
+    <div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title fs-5">Thông tin bài viết</h4>
+                    <button type="button" class="btn-close border-0" data-dismiss="modal" aria-label="Close">x</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nội dung bài viết</label>
+                        <textarea class="form-control f-content" style="max-height: 70px; min-height: 70px" placeholder="Nội dung bài viết"></textarea>
+                    </div>
+                    <div class="form-grop">
+                        <label>Hình ảnh:</label>
+                        <button class="btn btn-sm btn-warning btn-shadow" data-for="#img-input">Tải thêm ảnh</button>
+                        <input class="form-control f-image d-none" id="img-input" type="file" accept=".jpg,.png,.gif,.jpeg" />
+                        <div class="preview-img"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Huỷ</button>
+                    <button type="button" class="btn btn-sm btn-save btn-primary" data-dismiss="modal">Đăng bài viết</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/template" id="post-template">
+        <div class="post-item position-relative" data-id="{{id}}">
+            {{img}}
+            <div class="post-content {{contentClass}} p-2">
+                {{content}}
+            </div>
+            <div class="post-footer">
+                <div class="border like-button {{isLiked}}">
+                    {{icon}}
+                    <strong>{{like}} lượt thích</strong>
+                </div>
+                <div class="border comment-button text-center"><strong>{{comments}} bình luận</strong></div>
+                <div class="border text-right"><strong>{{creator}}</strong> - {{createTime}}</div>
+            </div>
+            <div class="position-absolute option-container">
+                {{report}}
+                {{removeOption}}
+            </div>
+        </div>
+    </script>
+    <script src="https://getbootstrap.com/docs/4.0/assets/js/vendor/popper.min.js"></script>
+    <script src="https://getbootstrap.com/docs/4.0/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript">
+        var load = true;
+        var report = '<button class="btn btn-xs btn-report btn-warning">báo cáo</button>';
+        var remove = '<button class="btn btn-xs btn-remove-post btn-danger">xóa</button>';
+        var unlike = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart" viewBox="0 0 16 16"><path fill-rule="evenodd" d="m8 2.42-.717-.737c-1.13-1.161-3.243-.777-4.01.72-.35.685-.451 1.707.236 3.062C4.16 6.753 5.52 8.32 8 10.042c2.479-1.723 3.839-3.29 4.491-4.577.687-1.355.587-2.377.236-3.061-.767-1.498-2.88-1.882-4.01-.721zm-.49 8.5c-10.78-7.44-3-13.155.359-10.063q.068.062.132.129.065-.067.132-.129c3.36-3.092 11.137 2.624.357 10.063l.235.468a.25.25 0 1 1-.448.224l-.008-.017c.008.11.02.202.037.29.054.27.161.488.419 1.003.288.578.235 1.15.076 1.629-.157.469-.422.867-.588 1.115l-.004.007a.25.25 0 1 1-.416-.278c.168-.252.4-.6.533-1.003.133-.396.163-.824-.049-1.246l-.013-.028c-.24-.48-.38-.758-.448-1.102a3 3 0 0 1-.052-.45l-.04.08a.25.25 0 1 1-.447-.224l.235-.468ZM6.013 2.06c-.649-.18-1.483.083-1.85.798-.131.258-.245.689-.08 1.335.063.244.414.198.487-.043.21-.697.627-1.447 1.359-1.692.217-.073.304-.337.084-.398"/></svg>'
+        var liked = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#dc3545" class="bi bi-balloon-heart-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2 2 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386"/></svg>'
+        var userId = $.cookie('UserId');
+        $(window).on('scroll', function () {
+            const loadElm = $('#load-more-elm');
+            if (loadElm.length) {
+                var rect = loadElm[0].getBoundingClientRect();
+                var windowHeight = $(window).height();
+
+                if (rect.top >= 0 && rect.bottom <= windowHeight && load) {
+                    load = false;
+                    loadPost();
+                }
+            }
+        });
+
+        $(document).ready(() => loadPost());
+
+        $(document).on('click', '.like-button', function (e) {
+            e.preventDefault();
+            if (!userId) {
+            {
+                alert('Vui lòng đăng nhập để tiếp tục!');
+                return;
+            }
+            var id = $(this).parents('.post-item').data('id');
+            var isLiked = $(this).hasClass('is-liked');
+            $.ajax({
+                url: '/Post/Like/' + id,
+                method: 'POST'
+            }).done(function (res) {
+                var elm = $('.post-item[data-id=' + id + ']').find('.like-button')
+                elm.html((isLiked ? unlike : liked) + ' <strong>' + res + ' lượt thích</strong>');
+                if (isLiked)
+                    elm.removeClass('is-liked');
+                else
+                    elm.addClass('is-liked');
+            }).fail(function(){
+                alert('Đã có lỗi xảy ra, vui lòng thử lại!');
+            });
+        });
+
+        $(document).on('click', '.comment-button', function (e) {
+            e.preventDefault();
+            var id = $(this).parents('.post-item').data('id');
+            $.ajax({
+                url: '/Post/' + id
+            }).done(function (res) {
+                $('#comment-modal').html(res);
+                $('#comment-modal').modal('show');
+            })
+        });
+
+        $(document).on('click', '.btn-shadow', function (e) {
+            e.preventDefault();
+            var forElm = $(this).data('for');
+            $(forElm).trigger('click');
+        });
+
+        $(document).on('change', '#img-input', function (e) {
+            if (!e.target.files[0]) {
+                $('.preview-img').html('');
+                return;
+            }
+            $('.preview-img').html('<img src="' + URL.createObjectURL(e.target.files[0]) + '" />');
+        });
+
+        $(document).on('click', '.btn-remove-post', function (e) {
+            e.preventDefault();
+            var id = $(this).parents('.post-item').data('id');
+            if (confirm('Bạn có chắc muốn xóa bài viết này?')) {
+                var url = '/Post/' + id + '/Remove';
+                $.ajax({
+                    url: url
+                }).done(function () {
+                    $('.post-item[data-id=' + id + ']').remove();
+                    $('.btn-close-modal').trigger('click');
+                    if ($('.post-container').html().replaceAll('\n', '').replaceAll(' ', '') == '<div id="load-more-elm"></div>'.replaceAll(' ', '')) {
+                        $('.post-container').html('<h4 class="text-center p-5 my-5">Chưa có bài viết nào được đăng gần đây!</h4>');
+                    };
+                }).fail(function () {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                });
+            }
+        });
+
+        $(document).on('click', '.btn-report', function (e) {
+            var id = $(this).parents('.post-item').data('id');
+            if (confirm('Bạn có chắc muốn báo cáo bài viết này?')) {
+                var url = '/Post/' + id + '/Report';
+                $.ajax({
+                    url: url
+                }).done(function () {
+                    $('.post-item[data-id=' + id + ']').remove();
+                    $('.btn-close-modal').trigger('click');
+                    if ($('.post-container').html().replaceAll('\n', '').replaceAll(' ', '') == '<div id="load-more-elm"></div>'.replaceAll(' ', '')) {
+                        $('.post-container').html('<h4 class="text-center p-5 my-5">Chưa có bài viết nào được đăng gần đây!</h4>');
+                    };
+                    alert('Báo cáo bài viết thành công!');
+                }).fail(function () {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                });
+            }
+        });
+
+        $(document).on('click', '.btn-save', function (e) {
+            var content = $('.f-content').val();
+            var image = $('.f-image')[0].files[0];
+            if (!content && !image) {
+                alert('Vui lòng điền nội dung bài viết');
+                e.preventDefault();
+                return;
+            }
+            var data = new FormData();
+            data.append('content', content);
+            data.append('image', image);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Create", "Post")',
+                data: data,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                alert(res.message);
+                if (res.success) {
+                    $('#add-modal').modal('hide');
+                    $('.f-content').val('');
+                    $('.f-image').val('');
+                    $('.preview-img').html('');
+
+                    var template = $('#post-template').html();
+                    var post = template.replaceAll('{{id}}', res.data.id)
+                        .replaceAll('{{content}}', res.data.content)
+                        .replaceAll('{{like}}', res.data.likes)
+                        .replaceAll('{{contentClass}}', res.data.image ? '' : 'content-only')
+                        .replaceAll('{{img}}', res.data.image ? '<img src="' + res.data.image + '" class="post-img" />' : '')
+                        .replaceAll('{{icon}}', res.data.isLiked ? liked : unlike)
+                        .replaceAll('{{isLiked}}', res.data.isLiked ? 'is-liked' : '')
+                        .replaceAll('{{removeOption}}', res.data.createUserId == userId ? remove : '')
+                        .replaceAll('{{comments}}', res.data.comments)
+                        .replaceAll('{{creator}}', res.data.createUser)
+                        .replaceAll('{{createTime}}', res.data.createdAt);
+                    if ($('.post-container').find('.post-item').length > 0) {
+                        var html = $('.post-container').html();
+                        $('.post-container').html(post);
+                        $('.post-container').append(html);
+                    } else {
+                        $('.post-container').html(post);
+                        $('.post-container').append('<div id="load-more-elm"></div>');
+                    }
+                }
+            }).fail(function (err) {
+                e.preventDefault();
+            })
+        });
+
+        $(document).on('click', '.btn-send-comment', function (e) {
+            e.preventDefault();
+            var content = $('.txtcomment').val();
+            if (!content) return;
+            var id = $(this).parents('.post-item').data('id');
+            var data = { postId: id, content };
+            $.ajax({
+                url: '/Post/Comment',
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json'
+            }).done(function (res) {
+                $('.txtcomment').val('');
+                var comment = `<div class="comment-item"><div class="d-flex w-100"><h5 class="m-0">` + res.createUserName + `</h5><div style="flex: 1"></div><strong>` + res.createAt + `</strong></div><div class="comment-content">` + content + `</div></div>`;
+                if ($('#comment-list-container').find('.comment-item').length > 0) {
+                    var html = $('#comment-list-container').html();
+                    $('#comment-list-container').html(comment);
+                    $('#comment-list-container').append(html);
+                } else {
+                    $('#comment-list-container').html(comment);
+                }
+            }).fail(function (err) {
+                alert('Có lỗi xảy ra khi cố gắng bình luận bài viết này');
+            });
+        });
+
+        function loadPost() {
+            var searchKey = $('input[name="searchKey"]').val();
+            var orderBy = $('select[name="orderBy"]').val();
+            var currentIds = [];
+            $.each($('.post-container').find('.post-item'), function (i, item) {
+                currentIds.push($(item).data('id'));
+            });
+            var request = {
+                searchKey, orderBy, currentIds
+            };
+            $.ajax({
+                url: '@Url.Action("LoadPost", "Post")',
+                data: JSON.stringify(request),
+                method: 'POST',
+                contentType: 'application/json'
+            }).done(function (res) {
+                if (res.length == 0 && $('.post-container').html() == '') {
+                    $('.post-container').html('<h4 class="text-center p-5 my-5">Chưa có bài viết nào được đăng gần đây!</h4>');
+                    return;
+                };
+                $('#load-more-elm').remove();
+                var template = $('#post-template').html();
+                $.each(res, function (i, item) {
+                    var post = template.replaceAll('{{id}}', item.id)
+                        .replaceAll('{{content}}', item.content)
+                        .replaceAll('{{like}}', item.likes)
+                        .replaceAll('{{contentClass}}', item.image ? '' : 'content-only')
+                        .replaceAll('{{img}}', item.image ? '<img src="' + item.image + '" class="post-img" />' : '')
+                        .replaceAll('{{icon}}', item.isLiked ? liked : unlike)
+                        .replaceAll('{{isLiked}}', item.isLiked ? 'is-liked' : '')
+                        .replaceAll('{{removeOption}}', item.createUserId == userId ? remove : '')
+                        .replaceAll('{{report}}', item.createUserId == userId ? report : '')
+                        .replaceAll('{{comments}}', item.comments)
+                        .replaceAll('{{creator}}', item.createUser)
+                        .replaceAll('{{createTime}}', item.createdAt);
+                    $('.post-container').append(post);
+                });
+                $('.post-container').append('<div id="load-more-elm"></div>');
+            });
+        }
+    </script>
+}

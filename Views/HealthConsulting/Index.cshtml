@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Health Consulting";
+}
+
+<section class="features">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-5">
+                <div class="feature-item d-flex flex-column">
+                    <h4>Tình trạng của bạn:</h4>
+                    <div class="consuling-form-container">
+                        <div class="form-item row form-group">
+                            <div class="col-4">
+                                <label>Chiều cao: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <input class="form-control" placeholder="Chiều cao" id="height" />
+                            </div>
+                        </div>
+                        <div class="form-item row form-group">
+                            <div class="col-4">
+                                <label>Cân nặng: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <input class="form-control" placeholder="Cân nặng" id="weight" />
+                            </div>
+                        </div>
+                        <div class="form-item row form-group">
+                            <div class="col-4">
+                                <label>Giới tính: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <select class="form-control" id="gender">
+                                    <option value="0" selected>Nữ</option>
+                                    <option value="1">Nam</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-item row form-group">
+                            <div class="col-4">
+                                <label>Tập luyện: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <select class="form-control" id="workout">
+                                    <option value="no" selected>Không</option>
+                                    <option value="sport">Thể thao - Bóng chuyền, bơi lội, đá bóng,...</option>
+                                    <option value="gym">Gym - tập kháng lực với tạ</option>
+                                    <option value="cardio">Cardio - Chạy bộ, nhảy dây,...</option>
+                                    <option value="gym-cardio">Kết hợp cả kháng lực và cardio</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-item row form-group frequency-div d-none">
+                            <div class="col-4">
+                                <label>Tần suất tập luyện: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <select class="form-control" id="frequency">
+                                    @for (int i = 1; i <= 7; i++)
+                                    {
+                                        <option value="@i">@i buổi/tuần</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-item row form-group">
+                            <div class="col-4">
+                                <label>Bệnh lý: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <input class="form-control" placeholder="Bệnh lý" id="pathology" />
+                            </div>
+                        </div>
+                        <div class="form-item row form-group">
+                            <div class="col-4">
+                                <label>Mục tiêu: <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-8">
+                                <input class="form-control" placeholder="Mục tiêu" id="target" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="another-info-container">
+                    </div>
+                    <div class="text-right">
+                        <button class="btn-add-info btn btn-primary">Thêm thông tin khác</button>
+                        <button class="btn-view-consulting btn btn-success">Xem tư vấn</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-7">
+                <div class="feature-item d-flex flex-column">
+                    <h4>Lời khuyên dành cho bạn:</h4>
+                    <div id="consulting-message">
+                        Chưa có thông tin tư vấn!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/template" id="another-info-template">
+    <div class="form-item row form-group">
+        <div class="col-4" >
+            <div class="d-flex">
+                <button class="btn btn-sm btn-danger btn-remove-info mr-2">Xóa</button>
+                <div style="flex: 1"><input class="form-control infor-key" placeholder = "Tên thông tin" /></div>
+            </div>
+        </div>
+        <div class="col-8" >
+            <input class="form-control infor-value" placeholder = "Số liệu" />
+        </div>
+    </div>
+</script>

@@ -1,0 +1,149 @@
+﻿@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model MaterialViewModel
+@{
+    ViewData["Title"] = "Material";
+}
+<head>
+    <style>
+        .btn-outline-main {
+            background: #fff;
+            color: #F1AF00;
+            border-color: #FEF889;
+        }
+
+            .btn-outline-main:hover {
+                background: #F1AF00;
+                color: #fff;
+                border-color: #FEF889;
+            }
+
+        th {
+            font-size: 16px !important;
+        }
+
+        td {
+            font-size: 14px !important;
+        }
+
+        .mr-90 {
+            margin-right: -70px !important;
+        }
+    </style>
+</head>
+@if (ViewData["error"] != null)
+{
+    <script>
+        alert('@ViewData["error"]');
+        @ViewData["error"] = null;
+    </script>
+}
+<section class="features2">
+    <div class="container-fluid">
+        <div class="row m-0 mr-90">
+            <div class="col-4 row">
+                <div class="feature-item d-flex flex-column p-2">
+                    <div class="d-flex flex-column">
+                        <h4>Loại sản phẩm</h4>
+                        <div class="list-group">
+                            <a href="/Material/Index?cate=-1"
+                               class="list-group-item list-group-item-action @(Model.cate == -1 ? "active" : "")"
+                               aria-current="true">
+                                Tất cả
+                            </a>
+                            @foreach (var cate in Model.categories)
+                            {
+                                <a href="/Material/Index?cate=@cate.categoryId"
+                                   class="list-group-item list-group-item-action @(Model.cate == cate.categoryId ? "active" : "")">
+                                    @cate.categoryName
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="mt-5 d-flex flex-column table-responsive overflow-auto" style="max-height: 500px !important;">
+                        <h4>Bảng tính dinh dưỡng</h4>
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 10%;">Tên</th>
+                                    <th scope="col">Hình</th>
+                                    <th scope="col">Calo/ 100g</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col">Tổng calo</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var f in Model.cart.cartItems)
+                                {
+                                    <tr>
+                                        <td scope="row">@f.food.foodName</td>
+                                        <td scope="row">
+                                            <img src="@Url.Content(f.food.imageUrl)"
+                                                 alt="img" style="width: 60px; height: 60px; object-fit: contain" />
+                                        </td>
+                                        <td scope="row">@f.food.caloriesPerGram / 100g</td>
+                                        <td scope="row">
+                                            <a href="/Material/Up?id=@f.cartItemId&page=@Model.pageNumber&cate=@Model.cate" class="btn btn-rounded rounded p-2 border-1 border-primary"><i class="fa icofont-arrow-up"></i></a>
+                                            @(f.gram * 100) g
+                                            @if (f.gram > 1)
+                                            {
+                                                <a href="/Material/Down?id=@f.cartItemId&page=@Model.pageNumber&cate=@Model.cate" class="btn btn-rounded rounded p-2 border-1 border-primary"><i class="fa icofont-arrow-down"></i></a>
+                                            }
+                                        </td>
+                                        <td scope="row">@f.totalCalories g</td>
+                                        <td scope="row">
+                                            <a href="/Material/Delete?id=@f.cartItemId&page=@Model.pageNumber&cate=@Model.cate" class="btn btn-danger">Xóa</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-end fw-bold font-weight-bold">Tổng cộng:</td>
+                                    <td class="font-weight-bold">@Model.cart.totalCalories g</td>
+                                    <td class="font-weight-bold"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 row me-0">
+                @foreach (var item in Model.foods)
+                {
+                    <div class="col-4">
+                        <div class="feature-block d-lg-flex">
+                            <div class="feature-item mb-5 mb-lg-0">
+                                <div class="feature-icon mb-4">
+                                    <img src=@Url.Content(item.imageUrl) alt="Feature Icon"
+                                         style="width: 150px; height: 100px; object-fit: contain;">
+                                </div>
+                                <span>@item.foodName</span>
+                                <h4 class="mb-3">@item.category.categoryName</h4>
+                                <p class="mb-4">@item.caloriesPerGram calories per 100gram</p>
+                                <div class="btn-group">
+                                    <a href="/Material/Detail?id=@item.foodId&page=@Model.pageNumber&cate=@Model.cate" class="btn btn-outline-main btn-sm">Detail</a>
+                                    <a href="/Material/Order?id=@item.foodId&page=@Model.pageNumber&cate=@Model.cate" class="btn btn-main btn-primary btn-sm">Order</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="container">
+                    <div class="d-flex justify-content-center align-items-center">
+                        @Html.PagedListPager(Model.foods, p => Url.Action("Index", "Material",
+                                 new { page = p, cate = Model.cate }),
+                                 new PagedListRenderOptions
+                        {
+                            LiElementClasses = new string[] { "page-item" },
+                            PageClasses = new string[] { "page-link" }
+                        })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<EatWellAssistant.Models.Entities.Food>
+@{
+    ViewBag.Title = "Index Food";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .truncate {
+        width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body table-responsive">
+            <a href="/Admin/Food/Add" class="btn btn-primary mb-2">Thêm sản phẩm</a>
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th scope="col"> Mã sản phẩm </th>
+                        <th> Tên sản phẩm </th>
+                        <th> Hình ảnh </th>
+                        <th> Loại sản phẩm </th>
+                        <th> Calo trên 100g</th>
+                        <th> Hàm lượng chất đạm </th>
+                        <th> Hàm lượng tinh bột </th>
+                        <th> Hàm lượng chất béo </th>
+                        <th> Hàm lượng độ cồn </th>
+                        <th> # </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td scope='row'>@item.foodId</td>
+                            <td class='text-truncate' style='max-width: 250px;' title='@item.foodName'>@item.foodName</td>
+                            <td><img src=@Url.Content(item.imageUrl) alt='IMG' class='mt-2' style='width: 100px; height: 100px; border-radius: 0 !important;' /></td>
+                            <td class='text-truncate' style='max-width: 250px;' title='@item.category.categoryName'>@item.category.categoryName</td>
+                            <td>@item.caloriesPerGram</td>
+                            <td>@item.protein</td>
+                            <td>@item.carbs</td>
+                            <td>@item.fat</td>
+                            <td>@item.alcohol</td>
+                            <td>
+                                <a href='/Admin/Food/Edit/@item.foodId' class='btn btn-warning'>Sửa</a>
+                                <a href='/Admin/Food/Delete/@item.foodId' class='btn btn-outline-danger'>Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

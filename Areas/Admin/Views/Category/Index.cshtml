@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EatWellAssistant.Models.Entities.Category>
+@{
+    ViewBag.Title = "Index Category";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .truncate {
+        width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body table-responsive">
+            <a href="/Admin/Category/Add" class="btn btn-primary mb-2">Thêm loại sản phẩm</a>
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th scope="col"> Mã loại sản phẩm </th>
+                        <th> Tên loại sản phẩm </th>
+                        <th> Mô tả </th>
+                        <th> # </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td scope='row'>@item.categoryId</td>
+                            <td>@item.categoryName</td>
+                            <td>@item.description</td>
+                            <td>
+                                <a href='/Admin/Category/Edit/@item.categoryId' class='btn btn-warning'>Sửa</a>
+                                <a href='/Admin/Category/Delete/@item.categoryId' class='btn btn-outline-danger'>Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,140 @@
+﻿@model PlanMealViewModel
+@{
+    ViewData["Title"] = "Plan Meal";
+}
+<head>
+    <style>
+        .btn-main-2 {
+            padding: 0.55rem 0.75rem !important;
+            font-size: 0.675rem !important;
+            line-height: 1.5 !important;
+            width: 7.5rem !important;
+        }
+
+        .day-title {
+            font-size: 22px !important;
+        }
+
+        .mr-90 {
+            margin-right: -110px !important;
+        }
+        .fs-6 {
+            font-size: 12px;
+        }
+    </style>
+</head>
+@if (ViewBag.error != null)
+{
+    <script>
+            alert('@ViewBag.error');
+            @ViewBag.error;
+    </script>
+}
+
+<section class="features">
+    <form method="post">
+        <div class="container-fluid">
+            <div class="row mr-90">
+                <div class="col-5">
+                    <div class="feature-item d-flex flex-column">
+                        <div class="mt-5 d-flex flex-column table-responsive overflow-auto" style="max-height: 500px !important;">
+                            <h4>Giỏ hàng</h4>
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">Tên</th>
+                                        <th scope="col">Hình</th>
+                                        <th scope="col">Calo/ 100g</th>
+                                        <th scope="col">Số lượng</th>
+                                        <th scope="col">Tổng calo</th>
+                                        <th scope="col">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var f in Model.cart.cartItems)
+                                    {
+                                        <tr>
+                                            <td scope="row">@f.food.foodName</td>
+                                            <td scope="row">
+                                                <img src="@Url.Content(f.food.imageUrl)"
+                                                     alt="img" style="width: 60px; height: 60px; object-fit: contain" />
+                                            </td>
+                                            <td scope="row">@f.food.caloriesPerGram kcl</td>
+                                            <td scope="row">@(f.gram * 100) g</td>
+                                            <td scope="row">@f.totalCalories kcal</td>
+                                            <td> <input type="checkbox" class="selection" name="selection" value="@f.cartItemId" /> </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" class="text-end fw-bold font-weight-bold">Tổng cộng:</td>
+                                        <td class="font-weight-bold">@Model.cart.totalCalories g</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-item col-6 row">
+                    @for (int i=0; i<Model.listDay.Count; i++)
+                    {
+                        var meal = Model.planMeals.FirstOrDefault(item => item.date.Value.Date == Model.listDay[i].Date);
+                        var breakfast = meal?.meals.FirstOrDefault(item => "Breakfast".Equals(item.mealName));
+                        var lunch = meal?.meals.FirstOrDefault(item => "Lunch".Equals(item.mealName));
+                        var dinner = meal?.meals.FirstOrDefault(item => "Dinner".Equals(item.mealName));
+
+                        <div class="col-4">
+                            <h3 class="day-title">@Model.listDay[i].ToLongDateString()</h3>
+                            <div class="fs-6">
+                                <button formaction="/PlanMeal/Breakfast?index=@i"
+                                        class="btn btn-main-2 btn-icon btn-round-full">
+                                    Breakfast
+                                </button> - @(breakfast?.totalCalories ?? 0)kcal
+                            </div>
+                            <div class="fs-6">
+                                <button formaction="/PlanMeal/Lunch?index=@i"
+                                        class="btn btn-main-2 btn-icon btn-round-full">
+                                    Lunch
+                                </button> - @(lunch?.totalCalories ?? 0)kcal
+                            </div>
+                            <div class="fs-6">
+                                <button formaction="/PlanMeal/Dinner?index=@i"
+                                        class="btn btn-main-2 btn-icon btn-round-full">
+                                    Dinner
+                                </button> - @(dinner?.totalCalories ?? 0)kcal
+                            </div>
+                            
+                            <button formaction="/PlanMeal/Check?index=@i" id="check"
+                                    class="btn btn-main-2 btn-icon btn-round-full">
+                                Check
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<script>
+    const listChk = document.querySelectorAll('input[type="checkbox"]');
+    const listBtn = document.querySelectorAll('button');
+    listBtn.forEach(button => {
+        if (button.id !== 'check') {
+            button.addEventListener('click', function () {
+                let isChecked = false;
+                listChk.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        isChecked = true;
+                    }
+                });
+
+                if (!isChecked) {
+                    event.preventDefault();
+                    alert('Vui lòng chọn ít nhất một checkbox.');
+                }
+            });
+        }
+    });
+</script>
